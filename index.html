@@ -1,0 +1,1633 @@
+<!DOCTYPE html>
+<html lang="gl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Corrector AD 25/26 — Avaliación de Diagnóstico</title>
+<link href="https://fonts.googleapis.com/css2?family=Source+Sans+3:wght@300;400;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+<style>
+/* ===== XUNTA DE GALICIA BRAND SYSTEM ===== */
+:root {
+  /* Brand colours from manual */
+  --xunta-blue: #007bc4;
+  --xunta-dark: #002b4a;
+  --xunta-blue-50: #80bde2;
+  --xunta-blue-25: #bfddf0;
+  --xunta-blue-10: #e6f3fa;
+  --white: #ffffff;
+  --gray-100: #f5f7f9;
+  --gray-200: #e8ecf0;
+  --gray-300: #d0d8e0;
+  --gray-500: #7a8a99;
+  --gray-700: #3d4f5c;
+  --gray-900: #1a2530;
+  --black: #000000;
+
+  /* Semantic */
+  --text-primary: var(--gray-900);
+  --text-secondary: var(--gray-700);
+  --text-muted: var(--gray-500);
+  --border: var(--gray-200);
+  --bg: var(--gray-100);
+  --surface: var(--white);
+
+  /* Status */
+  --green: #008542;
+  --green-light: #e6f4ed;
+  --red: #c0392b;
+  --red-light: #fdf0ee;
+  --yellow: #d4a017;
+  --yellow-light: #fdf8e6;
+
+  --radius: 4px;
+  --radius-md: 6px;
+  --shadow-sm: 0 1px 3px rgba(0,43,74,0.08);
+  --shadow: 0 2px 8px rgba(0,43,74,0.10);
+  --shadow-lg: 0 4px 20px rgba(0,43,74,0.14);
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: 'Source Sans 3', 'Segoe UI', Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+}
+
+/* ===== HEADER ===== */
+.site-header {
+  background: var(--xunta-blue);
+  color: var(--white);
+  padding: 0;
+  box-shadow: 0 2px 6px rgba(0,43,74,0.2);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 24px;
+  border-bottom: 1px solid rgba(255,255,255,0.15);
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.brand-escudo {
+  width: 36px;
+  height: 36px;
+  background: var(--white);
+  border-radius: 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  flex-shrink: 0;
+}
+
+.brand-text {
+  display: flex;
+  flex-direction: column;
+}
+
+.brand-name {
+  font-size: 0.78rem;
+  font-weight: 300;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  opacity: 0.85;
+  line-height: 1.2;
+}
+
+.brand-dept {
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  line-height: 1.2;
+}
+
+.header-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.api-indicator {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 12px;
+  border-radius: var(--radius);
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  cursor: pointer;
+  border: 1px solid rgba(255,255,255,0.35);
+  background: rgba(255,255,255,0.1);
+  color: var(--white);
+  transition: all 0.2s;
+  white-space: nowrap;
+  text-transform: uppercase;
+}
+
+.api-indicator:hover { background: rgba(255,255,255,0.2); border-color: rgba(255,255,255,0.6); }
+.dot-status { width: 8px; height: 8px; border-radius: 50%; background: #ff6b6b; flex-shrink: 0; }
+.dot-status.ok { background: #51cf66; }
+
+.header-nav {
+  background: var(--xunta-dark);
+  padding: 0 24px;
+  display: flex;
+  gap: 0;
+}
+
+.nav-tab {
+  padding: 10px 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.65);
+  cursor: pointer;
+  border: none;
+  background: none;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.nav-tab:hover { color: rgba(255,255,255,0.9); }
+.nav-tab.active { color: var(--white); border-bottom-color: var(--xunta-blue); }
+
+/* ===== LAYOUT ===== */
+.main-content {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px 20px 60px;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; }
+
+/* ===== CARDS ===== */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  margin-bottom: 16px;
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  background: var(--white);
+}
+
+.card-title {
+  font-size: 0.88rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--xunta-dark);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.card-title::before {
+  content: '';
+  display: inline-block;
+  width: 4px;
+  height: 16px;
+  background: var(--xunta-blue);
+  border-radius: 2px;
+}
+
+.card-body { padding: 20px; }
+
+/* ===== FORMS ===== */
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px; }
+.form-group { margin-bottom: 14px; }
+.form-group:last-child { margin-bottom: 0; }
+
+label {
+  display: block;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 5px;
+}
+
+input[type="text"], input[type="password"], select, textarea {
+  width: 100%;
+  padding: 9px 12px;
+  border: 1px solid var(--gray-300);
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.92rem;
+  color: var(--text-primary);
+  background: var(--white);
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+  appearance: none;
+}
+
+input:focus, select:focus, textarea:focus {
+  border-color: var(--xunta-blue);
+  box-shadow: 0 0 0 3px rgba(0,123,196,0.12);
+}
+
+textarea { resize: vertical; min-height: 100px; line-height: 1.55; }
+select option { background: white; }
+
+/* ===== IMAGE UPLOAD ===== */
+.upload-zone {
+  border: 2px dashed var(--gray-300);
+  border-radius: var(--radius-md);
+  padding: 28px 20px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  background: var(--gray-100);
+  position: relative;
+}
+
+.upload-zone:hover, .upload-zone.drag-over {
+  border-color: var(--xunta-blue);
+  background: var(--xunta-blue-10);
+}
+
+.upload-zone input[type="file"] {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.upload-icon { font-size: 2rem; margin-bottom: 8px; }
+.upload-label { font-size: 0.9rem; font-weight: 600; color: var(--xunta-blue); margin-bottom: 4px; }
+.upload-hint { font-size: 0.78rem; color: var(--text-muted); }
+
+.image-preview-wrap {
+  position: relative;
+  margin-top: 12px;
+  display: none;
+}
+
+.image-preview-wrap.visible { display: block; }
+
+.image-preview {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  border-radius: var(--radius);
+  border: 1px solid var(--border);
+  background: var(--gray-100);
+}
+
+.remove-image {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: var(--red);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.transcribe-btn {
+  margin-top: 10px;
+  width: 100%;
+}
+
+/* Input mode toggle */
+.input-mode-toggle {
+  display: flex;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-bottom: 14px;
+}
+
+.mode-btn {
+  flex: 1;
+  padding: 8px 12px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  border: none;
+  background: var(--white);
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.15s;
+  border-right: 1px solid var(--border);
+}
+
+.mode-btn:last-child { border-right: none; }
+.mode-btn.active { background: var(--xunta-blue); color: var(--white); }
+.mode-btn:hover:not(.active) { background: var(--xunta-blue-10); color: var(--xunta-blue); }
+
+.input-panel { display: none; }
+.input-panel.active { display: block; }
+
+/* ===== TOGGLE (dislexia) ===== */
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  background: var(--xunta-blue-10);
+  border: 1px solid var(--xunta-blue-25);
+  border-radius: var(--radius);
+  cursor: pointer;
+  transition: background 0.15s;
+  margin-bottom: 14px;
+}
+
+.toggle-row:hover { background: var(--xunta-blue-25); }
+
+.toggle {
+  width: 40px; height: 22px;
+  background: var(--gray-300);
+  border-radius: 999px;
+  position: relative;
+  transition: background 0.2s;
+  flex-shrink: 0;
+}
+
+.toggle.on { background: var(--xunta-blue); }
+.toggle::after { content: ''; position: absolute; top: 3px; left: 3px; width: 16px; height: 16px; background: white; border-radius: 50%; transition: left 0.2s; box-shadow: 0 1px 3px rgba(0,0,0,0.2); }
+.toggle.on::after { left: 21px; }
+.toggle-label { font-size: 0.88rem; font-weight: 600; color: var(--xunta-dark); }
+.toggle-label em { font-style: normal; color: var(--xunta-blue); }
+
+/* ===== WARNINGS ===== */
+.alert {
+  display: none;
+  padding: 10px 14px;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 10px;
+  border-left: 4px solid;
+}
+
+.alert.visible { display: flex; align-items: center; gap: 8px; }
+.alert-warn { background: var(--yellow-light); border-color: var(--yellow); color: #7a5c00; }
+.alert-error { background: var(--red-light); border-color: var(--red); color: var(--red); }
+
+/* ===== RUBRIC ===== */
+.rubric-block { margin-bottom: 0; }
+.rubric-block + .rubric-block { border-top: 1px solid var(--border); }
+
+.rubric-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  background: var(--gray-100);
+  border-bottom: 1px solid var(--border);
+}
+
+.rubric-section-name {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--xunta-dark);
+}
+
+.rubric-section-max {
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--xunta-blue);
+  background: var(--xunta-blue-10);
+  padding: 2px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--xunta-blue-25);
+}
+
+.rubric-indicator-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--border);
+  transition: background 0.1s;
+}
+
+.rubric-indicator-row:last-child { border-bottom: none; }
+.rubric-indicator-row:hover { background: var(--gray-100); }
+.rubric-indicator-row.ai-hint-row { background: rgba(0,123,196,0.04); }
+
+.indicator-label { font-size: 0.9rem; font-weight: 600; color: var(--text-primary); margin-bottom: 3px; }
+.indicator-hint { font-size: 0.78rem; color: var(--text-muted); line-height: 1.4; }
+
+.score-buttons { display: flex; gap: 6px; flex-shrink: 0; }
+
+.score-btn {
+  width: 38px;
+  height: 38px;
+  border-radius: var(--radius);
+  border: 1px solid var(--gray-300);
+  background: var(--white);
+  color: var(--text-muted);
+  font-size: 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.score-btn:hover { border-color: var(--xunta-blue); color: var(--xunta-blue); background: var(--xunta-blue-10); }
+.score-btn.sel-0 { background: var(--red); border-color: var(--red); color: white; }
+.score-btn.sel-1 { background: var(--yellow); border-color: var(--yellow); color: white; }
+.score-btn.sel-2 { background: var(--green); border-color: var(--green); color: white; }
+.score-btn.ai-sug { box-shadow: 0 0 0 2px var(--xunta-blue); }
+
+.ai-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--xunta-blue);
+  background: var(--xunta-blue-10);
+  border: 1px solid var(--xunta-blue-25);
+  padding: 1px 7px;
+  border-radius: 999px;
+  margin-left: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
+.exempt-badge {
+  display: inline-flex;
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--green);
+  background: var(--green-light);
+  border: 1px solid #b2dfc4;
+  padding: 1px 7px;
+  border-radius: 999px;
+  margin-left: 6px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  vertical-align: middle;
+}
+
+/* ===== TOTALS BAR ===== */
+.totals-bar {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  padding: 16px 20px;
+  background: var(--gray-100);
+  border-top: 1px solid var(--border);
+}
+
+.total-cell {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.total-cell::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 3px;
+  background: var(--xunta-blue);
+  transform: scaleX(var(--prog, 0));
+  transform-origin: left;
+  transition: transform 0.4s ease;
+}
+
+.total-code { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 4px; }
+.total-num { font-size: 1.8rem; font-weight: 700; color: var(--xunta-blue); line-height: 1; }
+.total-den { font-size: 0.75rem; color: var(--text-muted); margin-top: 2px; }
+
+/* ===== FEEDBACK ===== */
+.feedback-area {
+  background: var(--white);
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--xunta-blue);
+  border-radius: var(--radius);
+  padding: 14px 16px;
+  font-size: 0.92rem;
+  line-height: 1.6;
+  min-height: 80px;
+  outline: none;
+  color: var(--text-primary);
+  white-space: pre-wrap;
+}
+
+.feedback-area[contenteditable]:focus { border-color: var(--xunta-blue); box-shadow: 0 0 0 3px rgba(0,123,196,0.12); }
+.feedback-area.loading { color: var(--text-muted); font-style: italic; animation: pulse 1.4s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.45} }
+
+.char-count { font-size: 0.75rem; color: var(--text-muted); text-align: right; margin-top: 4px; font-weight: 600; }
+.char-count.over { color: var(--red); }
+
+/* ===== BUTTONS ===== */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 18px;
+  border-radius: var(--radius);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.btn-primary { background: var(--xunta-blue); color: white; }
+.btn-primary:hover { background: #0069a8; }
+.btn-primary:disabled { background: var(--gray-300); color: var(--text-muted); cursor: not-allowed; }
+
+.btn-dark { background: var(--xunta-dark); color: white; }
+.btn-dark:hover { background: #001e35; }
+
+.btn-outline { background: white; color: var(--xunta-blue); border: 1px solid var(--xunta-blue); }
+.btn-outline:hover { background: var(--xunta-blue-10); }
+.btn-outline:disabled { border-color: var(--gray-300); color: var(--text-muted); cursor: not-allowed; }
+
+.btn-ghost { background: white; color: var(--text-secondary); border: 1px solid var(--border); }
+.btn-ghost:hover { border-color: var(--gray-500); }
+
+.btn-danger { background: white; color: var(--red); border: 1px solid var(--red); }
+.btn-danger:hover { background: var(--red); color: white; }
+
+.btn-sm { padding: 6px 12px; font-size: 0.78rem; }
+.btn-full { width: 100%; justify-content: center; }
+.btn-lg { padding: 12px 24px; font-size: 0.92rem; }
+
+.btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+
+/* ===== SAVED LIST ===== */
+.saved-item {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 16px;
+  align-items: center;
+  padding: 14px 20px;
+  border-bottom: 1px solid var(--border);
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.saved-item:last-child { border-bottom: none; }
+.saved-item:hover { background: var(--xunta-blue-10); }
+
+.saved-meta { font-size: 0.75rem; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+.saved-codigo { font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 3px; }
+.saved-title { font-size: 0.8rem; color: var(--text-muted); }
+
+.score-pills { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+
+.pill {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  border: 1px solid;
+}
+
+.pill-high { background: var(--green-light); color: var(--green); border-color: #b2dfc4; }
+.pill-mid { background: var(--yellow-light); color: var(--yellow); border-color: #f0d890; }
+.pill-low { background: var(--red-light); color: var(--red); border-color: #f0c4c0; }
+
+/* ===== MODAL ===== */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,43,74,0.6);
+  backdrop-filter: blur(4px);
+  z-index: 999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s;
+}
+
+.modal-overlay.show { opacity: 1; pointer-events: all; }
+
+.modal {
+  background: white;
+  border-radius: var(--radius-md);
+  padding: 0;
+  max-width: 520px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  transform: translateY(16px);
+  transition: transform 0.2s;
+  overflow: hidden;
+}
+
+.modal-overlay.show .modal { transform: translateY(0); }
+
+.modal-head {
+  background: var(--xunta-blue);
+  color: white;
+  padding: 18px 24px;
+}
+
+.modal-head h2 { font-size: 1rem; font-weight: 700; letter-spacing: 0.03em; }
+.modal-head p { font-size: 0.82rem; opacity: 0.85; margin-top: 3px; }
+
+.modal-body { padding: 24px; }
+
+.info-callout {
+  background: var(--xunta-blue-10);
+  border: 1px solid var(--xunta-blue-25);
+  border-left: 4px solid var(--xunta-blue);
+  border-radius: var(--radius);
+  padding: 12px 14px;
+  font-size: 0.83rem;
+  color: var(--xunta-dark);
+  line-height: 1.5;
+  margin-bottom: 18px;
+}
+
+.info-callout a { color: var(--xunta-blue); font-weight: 700; }
+
+.key-wrap { position: relative; }
+.key-wrap input { padding-right: 44px; font-family: 'Courier New', monospace; font-size: 0.85rem; letter-spacing: 0.02em; }
+.eye-btn { position: absolute; right: 10px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 1rem; cursor: pointer; color: var(--text-muted); padding: 4px; }
+.eye-btn:hover { color: var(--xunta-blue); }
+
+.status-msg { display: none; padding: 9px 12px; border-radius: var(--radius); font-size: 0.82rem; font-weight: 600; margin-top: 8px; }
+.status-msg.visible { display: flex; align-items: center; gap: 8px; }
+.status-ok { background: var(--green-light); color: var(--green); border: 1px solid #b2dfc4; }
+.status-err { background: var(--red-light); color: var(--red); border: 1px solid #f0c4c0; }
+.status-test { background: var(--xunta-blue-10); color: var(--xunta-blue); border: 1px solid var(--xunta-blue-25); }
+
+/* ===== TOAST ===== */
+.toast {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  background: var(--xunta-dark);
+  color: white;
+  padding: 10px 20px;
+  border-radius: var(--radius);
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: all 0.25s;
+  pointer-events: none;
+  z-index: 9999;
+  box-shadow: var(--shadow-lg);
+}
+
+.toast.show { opacity: 1; transform: translateY(0); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 640px) {
+  .header-top { padding: 10px 16px; }
+  .header-nav { padding: 0 16px; }
+  .nav-tab { padding: 10px 14px; font-size: 0.78rem; }
+  .main-content { padding: 16px 12px 60px; }
+  .form-row { grid-template-columns: 1fr; gap: 0; }
+  .rubric-indicator-row { grid-template-columns: 1fr; gap: 10px; }
+  .score-buttons { justify-content: flex-start; }
+  .totals-bar { grid-template-columns: 1fr; gap: 8px; }
+  .saved-item { grid-template-columns: 1fr; }
+  .score-pills { justify-content: flex-start; }
+  .card-body { padding: 14px; }
+  .rubric-indicator-row { padding: 10px 14px; }
+  .rubric-section-header { padding: 10px 14px; }
+}
+
+@media (max-width: 400px) {
+  .brand-name { display: none; }
+  .btn { font-size: 0.78rem; padding: 8px 12px; }
+}
+
+/* ===== FOOTER ===== */
+.site-footer {
+  background: var(--xunta-dark);
+  color: rgba(255,255,255,0.6);
+  text-align: center;
+  padding: 16px;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  margin-top: 40px;
+}
+
+.divider { height: 1px; background: var(--border); margin: 14px 0; }
+</style>
+</head>
+<body>
+
+<!-- MODAL API KEY -->
+<div class="modal-overlay" id="modal-key">
+  <div class="modal">
+    <div class="modal-head">
+      <h2>🔑 Configuración da API Key</h2>
+      <p>Necesaria para análise con IA e xeración de feedback</p>
+    </div>
+    <div class="modal-body">
+      <div class="info-callout">
+        Obtén a túa API key en <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. Gárdase só no teu navegador, nunca se envía a servidores externos.<br><br>
+        💡 Custo estimado: <strong>~$0,005 por corrección completa</strong>. Unha clase de 25 alumnos/as ~$0,12.
+      </div>
+      <div class="form-group">
+        <label>API Key de Anthropic</label>
+        <div class="key-wrap">
+          <input type="password" id="inp-key" placeholder="sk-ant-api03-..." autocomplete="off">
+          <button class="eye-btn" onclick="toggleEye()" id="eye-btn">👁</button>
+        </div>
+        <div class="status-msg" id="key-status"></div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-primary" onclick="verifyKey()">✓ Verificar e gardar</button>
+        <button class="btn btn-ghost" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-danger btn-sm" id="btn-del-key" style="display:none;margin-left:auto" onclick="removeKey()">🗑 Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- HEADER -->
+<header class="site-header">
+  <div class="header-top">
+    <div class="brand">
+      <div class="brand-escudo">🏛️</div>
+      <div class="brand-text">
+        <div class="brand-name">Xunta de Galicia · Consellería de Educación</div>
+        <div class="brand-dept">Corrector Avaliación de Diagnóstico 25/26</div>
+      </div>
+    </div>
+    <div class="header-meta">
+      <div class="api-indicator" onclick="openModal()" id="api-ind">
+        <div class="dot-status" id="dot"></div>
+        <span id="api-label">Sen API key</span>
+      </div>
+    </div>
+  </div>
+  <nav class="header-nav">
+    <button class="nav-tab active" onclick="switchTab('corrixir')">✏️ Corrixir</button>
+    <button class="nav-tab" onclick="switchTab('gardados')">📋 Gardados</button>
+  </nav>
+</header>
+
+<!-- MAIN -->
+<main class="main-content">
+
+  <!-- TAB: CORRIXIR -->
+  <div class="tab-content active" id="tab-corrixir">
+
+    <!-- Configuración -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Configuración da proba</div>
+      </div>
+      <div class="card-body">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Materia</label>
+            <select id="sel-mat" onchange="onMatChange()">
+              <option value="LGL">Lingua Galega e Literatura</option>
+              <option value="LCL">Lingua Castelá e Literatura</option>
+              <option value="LEI">Lingua Estranxeira (Inglés)</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Pregunta</label>
+            <select id="sel-preg" onchange="onFormChange()">
+              <option value="P17">P.17 — Expresión escrita literaria</option>
+              <option value="P18">P.18 — Expresión escrita informativa</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label>Código alumno/a</label>
+          <input type="text" id="inp-cod" placeholder="ex: 0385-025P">
+        </div>
+      </div>
+    </div>
+
+    <!-- Texto / Imaxe -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Produción do/a alumno/a</div>
+      </div>
+      <div class="card-body">
+
+        <div class="input-mode-toggle">
+          <button class="mode-btn active" onclick="setMode('text')" id="mode-text">✍️ Texto manual</button>
+          <button class="mode-btn" onclick="setMode('image')" id="mode-img">📷 Subir imaxe / foto</button>
+        </div>
+
+        <!-- TEXT MODE -->
+        <div class="input-panel active" id="panel-text">
+          <div class="form-group">
+            <label>Texto producido polo/a alumno/a</label>
+            <textarea id="inp-text" placeholder="Escribe ou pega aquí o texto do alumno/a..." oninput="onTextInput()"></textarea>
+            <div class="char-count" id="char-cnt">0 caracteres</div>
+          </div>
+        </div>
+
+        <!-- IMAGE MODE -->
+        <div class="input-panel" id="panel-img">
+          <div class="form-group">
+            <label>Foto ou captura da redacción</label>
+            <div class="upload-zone" id="upload-zone">
+              <input type="file" id="inp-file" accept="image/*" onchange="onFileSelect(event)">
+              <div class="upload-icon">📸</div>
+              <div class="upload-label">Arrastra a foto aquí ou preme para seleccionar</div>
+              <div class="upload-hint">JPG, PNG, WEBP — Funciona con fotos de móbil e capturas de pantalla</div>
+            </div>
+            <div class="image-preview-wrap" id="preview-wrap">
+              <img id="img-preview" class="image-preview" alt="Vista previa">
+              <button class="remove-image" onclick="removeImage()" title="Eliminar imaxe">✕</button>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-full transcribe-btn" id="btn-transcribe" onclick="transcribeImage()" disabled>
+            🔍 Transcribir texto con IA
+          </button>
+          <div class="divider"></div>
+          <div class="form-group">
+            <label>Texto transcrito (revisa e edita se é necesario)</label>
+            <textarea id="inp-transcribed" placeholder="O texto transcrito aparecerá aquí..." oninput="onTextInput()"></textarea>
+            <div class="char-count" id="char-cnt-tr">0 caracteres</div>
+          </div>
+        </div>
+
+        <!-- Dislexia -->
+        <div class="toggle-row" onclick="toggleDislexia()">
+          <div class="toggle" id="dislexia-tog"></div>
+          <div class="toggle-label">Proba marcada con <em>DISLEXIA</em> — aplicar pautas específicas de corrección</div>
+        </div>
+
+        <div class="alert alert-warn" id="warn-ext">⚠️ A extensión non alcanza o 50% mínimo — código 0 en todos os apartados.</div>
+        <div class="alert alert-error" id="warn-blank">⚠️ Tarefa en branco — código 0 en todos os apartados.</div>
+
+        <div class="btn-row">
+          <button class="btn btn-primary" id="btn-analyse" onclick="analyseAI()" disabled>🤖 Analizar con IA e suxerir puntuacións</button>
+          <span id="ai-hint" style="font-size:0.78rem;color:var(--text-muted);align-self:center;">Require API key — preme o indicador no encabezado</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rúbrica -->
+    <div class="card" id="rubric-card">
+      <div class="card-header">
+        <div class="card-title">Rúbrica de corrección</div>
+      </div>
+      <div id="rubric-body"></div>
+      <div class="totals-bar" id="totals-bar"></div>
+    </div>
+
+    <!-- Feedback -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Feedback para o/a alumno/a</div>
+        <select id="sel-lang" style="width:auto;font-size:0.82rem;padding:5px 10px;">
+          <option value="gl">Galego</option>
+          <option value="es">Castelán</option>
+        </select>
+      </div>
+      <div class="card-body">
+        <div class="feedback-area" id="feedback-box" contenteditable="true">O feedback xerarase ao premer o botón...</div>
+        <div class="char-count" id="fb-count">0 / 500 caracteres</div>
+        <div class="btn-row">
+          <button class="btn btn-outline" id="btn-fb" onclick="genFeedback()" disabled>✨ Xerar feedback con IA</button>
+          <button class="btn btn-ghost" onclick="copyFeedback()">📋 Copiar</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex;gap:12px;flex-wrap:wrap;">
+      <button class="btn btn-dark btn-lg" style="flex:1;justify-content:center;" onclick="saveCorrection()">💾 Gardar corrección</button>
+      <button class="btn btn-ghost" onclick="resetAll()">🔄 Nova corrección</button>
+    </div>
+
+  </div>
+
+  <!-- TAB: GARDADOS -->
+  <div class="tab-content" id="tab-gardados">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">Correccións gardadas</div>
+        <div style="display:flex;gap:8px;">
+          <button class="btn btn-ghost btn-sm" onclick="exportCSV()">📊 Exportar CSV</button>
+          <button class="btn btn-danger btn-sm" onclick="clearAll()">🗑 Borrar todo</button>
+        </div>
+      </div>
+      <div id="saved-list">
+        <div style="padding:24px;text-align:center;color:var(--text-muted);font-size:0.88rem;">Aínda non hai correccións gardadas.</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<footer class="site-footer">
+  Consellería de Educación, Ciencia, Universidades e Formación Profesional · Xunta de Galicia · AD 2025–2026
+</footer>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ===================================================
+// RUBRICS DATA
+// ===================================================
+const R = {
+  LGL_P17: {
+    t:"P.17 — Receitas estrafalarias (LGL)", ext:"9-10 liñas",
+    s:[
+      { l:"Coherencia e cohesión", c:"P.17.1", max:8, ind:[
+        { id:"relevancia", l:"Relevancia do contido", h:["Non recoll. ideas ou info irrelevante/moi escasa","Algunhas ideas (título, tipo, ingredientes, preparación); info prescindible","Meirande parte das ideas + creatividade"] },
+        { id:"ordenacion", l:"Ordenación das ideas", h:["Ideas desordenadas, dificultan comprensión","Algunha incongruencia, pero comprensible","Ideas ordenadas, claras e comprensibles"] },
+        { id:"cohesion", l:"Cohesión gramatical e léxica", h:["Non usa mecanismos de cohesión","Úsanse algúns mecanismos de substitución","Usa correctamente pronomes, sinónimos..."] },
+        { id:"puntuacion", l:"Puntuación", h:["Non usa puntuación básica","Puntuación básica con incorreccións","Usa a puntuación básica correctamente"], dx:true }
+      ]},
+      { l:"Adecuación", c:"P.17.2", max:10, ind:[
+        { id:"tipoloxia", l:"Tipoloxía textual", h:["Trazos da tipoloxía con dificultades ou cambios bruscos","Trazos pero non a respecta ao longo de todo o texto","Tipoloxía axeitada: receita estrafalaria ao xeito de Toto"] },
+        { id:"lexico", l:"Léxico", h:["Vocabulario moi pobre e/ou con castelanismos","Vocabulario correcto pero pouco preciso","Vocabulario axustado, amplo e correcto"] },
+        { id:"limpeza", l:"Limpeza", h:["Máis de tres borróns","Entre dous e tres borróns","Presentación limpa"] },
+        { id:"caligrafia", l:"Caligrafía", h:["Ilexible ou dificulta a lectura","Lexible pero pouco clara","Adecuada e clara, permite ler sen dificultades"], dx:true },
+        { id:"pauta", l:"Adecuación á pauta", h:["Non respecta formato (liñas, marxes...)","Respecta parcialmente o formato","Respecta o formato da tarefa"] }
+      ]},
+      { l:"Corrección ortográfica e gramatical", c:"P.17.3", max:6, ind:[
+        { id:"ortografia", l:"Ortografía das palabras", h:["Máis de 6 erros ortográficos graves","Entre 3 e 6 erros ortográficos graves","Menos de 3 erros ortográficos graves"], dx:true },
+        { id:"acentuacion", l:"Ortografía da acentuación", h:["Máis de 6 erros de acentuación graves","Usa algúns acentos, entre 3 e 6 erros","Menos de 3 erros de acentuación graves"], dx:true },
+        { id:"morfosintaxe", l:"Morfosintaxe", h:["Máis de 4 erros morfosintácticos graves","Entre 1 e 4 erros morfosintácticos graves","Non comete erros morfosintácticos graves"] }
+      ]}
+    ]
+  },
+  LGL_P18: {
+    t:"P.18 — Un recordo saboroso (LGL)", ext:"7-8 liñas",
+    s:[
+      { l:"Coherencia e cohesión", c:"P.18.1", max:8, ind:[
+        { id:"relevancia", l:"Relevancia do contido", h:["Non recoll. ideas ou info irrelevante","Algunhas ideas (con quen, onde, que comeu, por que...); info prescindible","Meirande parte das ideas + creatividade"] },
+        { id:"ordenacion", l:"Ordenación das ideas", h:["Ideas desordenadas","Algunha incongruencia, pero comprensible","Ideas ordenadas, claras e comprensibles"] },
+        { id:"cohesion", l:"Cohesión gramatical e léxica", h:["Non usa mecanismos","Algúns mecanismos de substitución","Usa correctamente pronomes, sinónimos..."] },
+        { id:"puntuacion", l:"Puntuación", h:["Non usa puntuación básica","Puntuación básica con incorreccións","Puntuación básica correctamente"], dx:true }
+      ]},
+      { l:"Adecuación", c:"P.18.2", max:10, ind:[
+        { id:"tipoloxia", l:"Tipoloxía textual", h:["Trazos da tipoloxía con dificultades","Trazos pero non respecta todo o texto","Tipoloxía axeitada para a situación comunicativa"] },
+        { id:"lexico", l:"Léxico", h:["Vocabulario moi pobre con castelanismos","Vocabulario correcto pero pouco preciso","Vocabulario axustado, amplo e correcto"] },
+        { id:"limpeza", l:"Limpeza", h:["Máis de tres borróns","Entre dous e tres borróns","Presentación limpa"] },
+        { id:"caligrafia", l:"Caligrafía", h:["Ilexible","Lexible pero pouco clara","Adecuada e clara"], dx:true },
+        { id:"pauta", l:"Adecuación á pauta", h:["Non respecta formato","Respecta parcialmente","Respecta o formato"] }
+      ]},
+      { l:"Corrección ortográfica e gramatical", c:"P.18.3", max:6, ind:[
+        { id:"ortografia", l:"Ortografía das palabras", h:["Máis de 6 erros graves","Entre 3 e 6 erros","Menos de 3 erros"], dx:true },
+        { id:"acentuacion", l:"Ortografía da acentuación", h:["Máis de 6 erros","Entre 3 e 6 erros","Menos de 3 erros"], dx:true },
+        { id:"morfosintaxe", l:"Morfosintaxe", h:["Máis de 4 erros morfosintácticos","Entre 1 e 4 erros","Sen erros morfosintácticos graves"] }
+      ]}
+    ]
+  },
+  LCL_P17: {
+    t:"P.17 — Sobrevivir en la isla del tesoro (LCL)", ext:"9-10 líneas",
+    s:[
+      { l:"Coherencia y cohesión", c:"P.17.1", max:8, ind:[
+        { id:"relevancia", l:"Relevancia del contenido", h:["Continúa historia pero sin ideas indicadas o info irrelevante","Algunas ideas (alimento, tesoro...); info prescindible","Todas las ideas (alimento, tesoro, salida) + creatividad"] },
+        { id:"ordenacion", l:"Ordenación de las ideas", h:["Ideas desordenadas","Alguna incongruencia, comprensible","Ideas ordenadas, claras y comprensibles"] },
+        { id:"cohesion", l:"Cohesión gramatical y léxica", h:["No usa mecanismos","Algunos mecanismos de sustitución","Usa correctamente pronombres, sinónimos..."] },
+        { id:"puntuacion", l:"Puntuación", h:["No usa puntuación básica","Puntuación básica con incorrecciones","Puntuación básica correctamente"], dx:true }
+      ]},
+      { l:"Adecuación", c:"P.17.2", max:10, ind:[
+        { id:"tipoloxia", l:"Tipología textual", h:["Rasgos narrativos con dificultades","Rasgos narrativos pero no respeta todo","Tipología adecuada: texto narrativo"] },
+        { id:"lexico", l:"Léxico", h:["Vocabulario muy pobre con incorrecciones","Vocabulario correcto pero poco preciso","Vocabulario ajustado, variado y correcto"] },
+        { id:"limpeza", l:"Limpieza", h:["Más de tres borrones","Entre dos y tres borrones","Presentación limpia"] },
+        { id:"caligrafia", l:"Caligrafía", h:["Ilegible","Legible pero poco clara","Adecuada y clara"], dx:true },
+        { id:"pauta", l:"Adecuación a la pauta", h:["No respeta formato","Respeta parcialmente","Respeta el formato"] }
+      ]},
+      { l:"Corrección ortográfica y gramatical", c:"P.17.3", max:6, ind:[
+        { id:"ortografia", l:"Ortografía de las palabras", h:["Más de 6 errores graves","Entre 3 y 6 errores","Menos de 3 errores"], dx:true },
+        { id:"acentuacion", l:"Ortografía de la acentuación", h:["Más de 6 errores","Entre 3 y 6 errores","Menos de 3 errores"], dx:true },
+        { id:"morfosintaxe", l:"Morfosintaxis", h:["Más de 4 errores morfosintácticos","Entre 1 y 4 errores","Sin errores morfosintácticos graves"] }
+      ]}
+    ]
+  },
+  LCL_P18: {
+    t:"P.18 — Una noticia para chuparse los dedos (LCL)", ext:"7-8 líneas",
+    s:[
+      { l:"Coherencia y cohesión", c:"P.18.1", max:8, ind:[
+        { id:"relevancia", l:"Relevancia del contenido", h:["Temática ok pero sin ideas pedidas o info irrelevante","Algunas ideas (titular, entradilla, noticia)","Mayor parte de las ideas + creatividad"] },
+        { id:"ordenacion", l:"Ordenación de las ideas", h:["Ideas desordenadas","Alguna incongruencia, comprensible","Ideas ordenadas, claras"] },
+        { id:"cohesion", l:"Cohesión gramatical y léxica", h:["No usa mecanismos","Algunos mecanismos","Usa correctamente pronombres, sinónimos..."] },
+        { id:"puntuacion", l:"Puntuación", h:["No usa puntuación básica","Con algunas incorrecciones","Correctamente"], dx:true }
+      ]},
+      { l:"Adecuación", c:"P.18.2", max:10, ind:[
+        { id:"tipoloxia", l:"Tipología textual", h:["Rasgos de noticia con dificultades","Rasgos pero no respeta todo","Tipología adecuada: una noticia"] },
+        { id:"lexico", l:"Léxico", h:["Muy pobre con incorrecciones","Correcto pero poco preciso","Ajustado, variado y correcto"] },
+        { id:"limpeza", l:"Limpieza", h:["Más de tres borrones","Entre dos y tres","Limpia"] },
+        { id:"caligrafia", l:"Caligrafía", h:["Ilegible","Legible pero poco clara","Adecuada y clara"], dx:true },
+        { id:"pauta", l:"Adecuación a la pauta", h:["No respeta","Parcialmente","Respeta"] }
+      ]},
+      { l:"Corrección ortográfica y gramatical", c:"P.18.3", max:6, ind:[
+        { id:"ortografia", l:"Ortografía de las palabras", h:["Más de 6 errores","Entre 3 y 6","Menos de 3"], dx:true },
+        { id:"acentuacion", l:"Ortografía de la acentuación", h:["Más de 6","Entre 3 y 6","Menos de 3"], dx:true },
+        { id:"morfosintaxe", l:"Morfosintaxis", h:["Más de 4 errores","Entre 1 y 4","Sin errores"] }
+      ]}
+    ]
+  },
+  LEI_Q21: {
+    t:"Q.21 — My Experience at The Food Market (Inglés)", ext:"texto valorable",
+    s:[
+      { l:"Cumprimento da tarefa / Relevancia", c:"Q.21.1", max:2, ind:[
+        { id:"relevancia", l:"Cumprimento da tarefa", h:["Trata 1 ou ningún punto, moi curto ou non se corresponde","Trata 2 ou 3 puntos, información relevante","Trata os 4 puntos (I can see, favourite stand, It's from, I like/don't like) + info relevante"] }
+      ]},
+      { l:"Competencia pragmática: coherencia e cohesión", c:"Q.21.2", max:2, ind:[
+        { id:"coherencia", l:"Coherencia e cohesión", h:["Texto incomprensible, moi curto ou non se corresponde","Redacta a maioría das ideas de forma clara, usa conectores con erros que non afectan á comprensión","Redacta as ideas de forma clara e coherente, emprega conectores e signos de puntuación"] }
+      ]},
+      { l:"Competencia lingüística: riqueza e corrección", c:"Q.21.3", max:2, ind:[
+        { id:"linguistica", l:"Riqueza e corrección gramatical e léxica", h:["Erros gramaticais/ortográficos impiden comprensión ou moi curto","Control suficiente, erros que non impiden comprensión, léxico pouco variado","Bo control gramatical, ortografía correcta (algún erro puntual), léxico variado e apropiado"], dx:true }
+      ]}
+    ]
+  }
+};
+
+// ===================================================
+// STATE
+// ===================================================
+let scores = {}, aiSug = {}, dislexia = false;
+let inputMode = 'text';
+let imageBase64 = null, imageMime = null;
+let saved = JSON.parse(localStorage.getItem('ad_corr') || '[]');
+let apiKey = localStorage.getItem('ad_key') || '';
+
+// ===================================================
+// HELPERS
+// ===================================================
+function getRubricKey() {
+  const m = document.getElementById('sel-mat').value;
+  const p = document.getElementById('sel-preg').value;
+  return m === 'LEI' ? 'LEI_Q21' : `${m}_${p}`;
+}
+
+function getActiveText() {
+  if (inputMode === 'text') return document.getElementById('inp-text').value.trim();
+  return document.getElementById('inp-transcribed').value.trim();
+}
+
+function callAPI(model, messages, maxTokens) {
+  return fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'x-api-key': apiKey,
+      'anthropic-version': '2023-06-01',
+      'anthropic-dangerous-direct-browser-access': 'true'
+    },
+    body: JSON.stringify({ model, max_tokens: maxTokens, messages })
+  }).then(r => r.json());
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+// ===================================================
+// API KEY
+// ===================================================
+function openModal() {
+  document.getElementById('inp-key').value = apiKey;
+  document.getElementById('key-status').className = 'status-msg';
+  document.getElementById('btn-del-key').style.display = apiKey ? 'flex' : 'none';
+  document.getElementById('modal-key').classList.add('show');
+}
+function closeModal() { document.getElementById('modal-key').classList.remove('show'); }
+function toggleEye() {
+  const i = document.getElementById('inp-key');
+  i.type = i.type === 'password' ? 'text' : 'password';
+  document.getElementById('eye-btn').textContent = i.type === 'password' ? '👁' : '🙈';
+}
+async function verifyKey() {
+  const k = document.getElementById('inp-key').value.trim();
+  if (!k) { setKeyStatus('err','Introduce unha API key'); return; }
+  if (!k.startsWith('sk-ant-')) { setKeyStatus('err','Formato incorrecto. Debe comezar por sk-ant-'); return; }
+  setKeyStatus('test','Verificando...');
+  try {
+    const r = await fetch('https://api.anthropic.com/v1/messages', {
+      method:'POST', headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+      body: JSON.stringify({model:'claude-haiku-4-5',max_tokens:10,messages:[{role:'user',content:'Hi'}]})
+    });
+    if (r.ok || r.status===400) {
+      apiKey=k; localStorage.setItem('ad_key',k);
+      setKeyStatus('ok','✓ API key válida e gardada correctamente');
+      updateApiIndicator(); enableAI();
+      setTimeout(closeModal,1400);
+    } else if (r.status===401) { setKeyStatus('err','API key inválida. Comproba que a copiaches correctamente.'); }
+    else { setKeyStatus('err',`Erro ${r.status}. Inténtao de novo.`); }
+  } catch { setKeyStatus('err','Sen conexión a internet.'); }
+}
+function removeKey() {
+  if (!confirm('Eliminar a API key gardada?')) return;
+  apiKey=''; localStorage.removeItem('ad_key');
+  updateApiIndicator(); disableAI(); closeModal();
+}
+function setKeyStatus(type, msg) {
+  const el = document.getElementById('key-status');
+  el.className = `status-msg visible status-${type}`;
+  el.textContent = msg;
+}
+function updateApiIndicator() {
+  const dot = document.getElementById('dot');
+  const lbl = document.getElementById('api-label');
+  if (apiKey) { dot.className='dot-status ok'; lbl.textContent='API conectada'; }
+  else { dot.className='dot-status'; lbl.textContent='Sen API key'; }
+}
+function enableAI() {
+  document.getElementById('btn-analyse').disabled = false;
+  document.getElementById('btn-fb').disabled = false;
+  document.getElementById('btn-transcribe').disabled = imageBase64 === null;
+  document.getElementById('ai-hint').style.display = 'none';
+}
+function disableAI() {
+  document.getElementById('btn-analyse').disabled = true;
+  document.getElementById('btn-fb').disabled = true;
+  document.getElementById('btn-transcribe').disabled = true;
+  document.getElementById('ai-hint').style.display = 'inline';
+}
+
+// ===================================================
+// INPUT MODE
+// ===================================================
+function setMode(mode) {
+  inputMode = mode;
+  document.getElementById('mode-text').classList.toggle('active', mode==='text');
+  document.getElementById('mode-img').classList.toggle('active', mode==='image');
+  document.getElementById('panel-text').classList.toggle('active', mode==='text');
+  document.getElementById('panel-img').classList.toggle('active', mode==='image');
+}
+
+function onFileSelect(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  imageMime = file.type;
+  const reader = new FileReader();
+  reader.onload = (ev) => {
+    imageBase64 = ev.target.result.split(',')[1];
+    document.getElementById('img-preview').src = ev.target.result;
+    document.getElementById('preview-wrap').classList.add('visible');
+    if (apiKey) document.getElementById('btn-transcribe').disabled = false;
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImage() {
+  imageBase64 = null; imageMime = null;
+  document.getElementById('inp-file').value = '';
+  document.getElementById('preview-wrap').classList.remove('visible');
+  document.getElementById('btn-transcribe').disabled = true;
+}
+
+// Drag and drop
+const uz = document.getElementById('upload-zone');
+uz.addEventListener('dragover', e => { e.preventDefault(); uz.classList.add('drag-over'); });
+uz.addEventListener('dragleave', () => uz.classList.remove('drag-over'));
+uz.addEventListener('drop', e => {
+  e.preventDefault(); uz.classList.remove('drag-over');
+  const file = e.dataTransfer.files[0];
+  if (file && file.type.startsWith('image/')) {
+    const dt = new DataTransfer(); dt.items.add(file);
+    document.getElementById('inp-file').files = dt.files;
+    onFileSelect({ target: { files: dt.files } });
+  }
+});
+
+// ===================================================
+// TRANSCRIBE IMAGE
+// ===================================================
+async function transcribeImage() {
+  if (!apiKey || !imageBase64) return;
+  const btn = document.getElementById('btn-transcribe');
+  btn.disabled = true; btn.textContent = '⏳ Transcribindo...';
+
+  const key = getRubricKey();
+  const rubric = R[key];
+
+  const prompt = `Estás a axudar a corrixir a Avaliación de Diagnóstico de 4º de Primaria en Galicia.
+A imaxe mostra a redacción manuscrita dun alumno/a para a tarefa: "${rubric.t}".
+
+Por favor:
+1. Transcribe EXACTAMENTE o texto manuscrito que se ve na imaxe, palabra por palabra, incluíndo todos os erros ortográficos tal como están escritos.
+2. Non corrijas nada, non interpretes, só transcribe o que está escrito.
+3. Se hai un título, inclúeo ao principio.
+4. Se non se pode ler algún fragmento, indica [ilexible].
+
+Responde ÚNICAMENTE coa transcrición, sen ningún texto adicional.`;
+
+  try {
+    const data = await callAPI('claude-sonnet-4-5', [{
+      role: 'user',
+      content: [
+        { type: 'image', source: { type: 'base64', media_type: imageMime, data: imageBase64 } },
+        { type: 'text', text: prompt }
+      ]
+    }], 1000);
+
+    const transcribed = data.content?.map(i => i.text || '').join('') || '';
+    document.getElementById('inp-transcribed').value = transcribed;
+    document.getElementById('char-cnt-tr').textContent = `${transcribed.length} caracteres`;
+    showToast('✓ Texto transcrito correctamente');
+  } catch(e) {
+    alert('Erro ao transcribir. Comproba a conexión e a API key.');
+  }
+
+  btn.disabled = false; btn.textContent = '🔍 Transcribir texto con IA';
+}
+
+// ===================================================
+// FORM LOGIC
+// ===================================================
+function onMatChange() {
+  const m = document.getElementById('sel-mat').value;
+  const sel = document.getElementById('sel-preg');
+  sel.innerHTML = m === 'LEI'
+    ? '<option value="Q21">Q.21 — Expresión escrita (Inglés)</option>'
+    : '<option value="P17">P.17 — Expresión escrita literaria</option><option value="P18">P.18 — Expresión escrita informativa</option>';
+  onFormChange();
+}
+
+function onFormChange() {
+  scores = {}; aiSug = {};
+  renderRubric(); renderTotals();
+  document.getElementById('feedback-box').textContent = 'O feedback xerarase ao premer o botón...';
+  document.getElementById('fb-count').textContent = '0 / 500 caracteres';
+}
+
+function onTextInput() {
+  const text = inputMode === 'text'
+    ? document.getElementById('inp-text').value
+    : document.getElementById('inp-transcribed').value;
+  const id = inputMode === 'text' ? 'char-cnt' : 'char-cnt-tr';
+  document.getElementById(id).textContent = `${text.length} caracteres`;
+}
+
+function toggleDislexia() {
+  dislexia = !dislexia;
+  document.getElementById('dislexia-tog').classList.toggle('on', dislexia);
+  renderRubric(); renderTotals();
+}
+
+// ===================================================
+// RUBRIC RENDER
+// ===================================================
+function renderRubric() {
+  const key = getRubricKey();
+  const rubric = R[key];
+  const body = document.getElementById('rubric-body');
+  body.innerHTML = '';
+
+  rubric.s.forEach(section => {
+    const block = document.createElement('div');
+    block.className = 'rubric-block';
+
+    const hdr = document.createElement('div');
+    hdr.className = 'rubric-section-header';
+    hdr.innerHTML = `<div class="rubric-section-name">${section.l}</div><div class="rubric-section-max">máx. ${section.max} pts</div>`;
+    block.appendChild(hdr);
+
+    section.ind.forEach(ind => {
+      const isExempt = ind.dx && dislexia;
+      if (isExempt) scores[ind.id] = 2;
+
+      const cur = isExempt ? 2 : (scores[ind.id] !== undefined ? scores[ind.id] : null);
+      const ai = aiSug[ind.id];
+      const hint = cur !== null ? ind.h[cur] : (ai !== undefined ? ind.h[ai] : '— sen puntuar —');
+
+      const row = document.createElement('div');
+      row.className = 'rubric-indicator-row' + (ai !== undefined && cur === null ? ' ai-hint-row' : '');
+
+      row.innerHTML = `
+        <div>
+          <div class="indicator-label">
+            ${ind.l}
+            ${isExempt ? '<span class="exempt-badge">Dislexia: máx.</span>' : ''}
+            ${ai !== undefined && cur === null ? `<span class="ai-badge">IA: ${ai}</span>` : ''}
+          </div>
+          <div class="indicator-hint">${hint}</div>
+        </div>
+        <div class="score-buttons">
+          ${isExempt
+            ? '<div class="score-btn sel-2" style="cursor:default">2</div>'
+            : [0,1,2].map(v => {
+                let cls = cur === v ? `sel-${v}` : '';
+                if (ai !== undefined && cur === null && v === ai) cls += ' ai-sug';
+                return `<button class="score-btn ${cls}" onclick="setScore('${ind.id}',${v})" title="${ind.h[v]}">${v}</button>`;
+              }).join('')
+          }
+        </div>`;
+      block.appendChild(row);
+    });
+
+    body.appendChild(block);
+  });
+}
+
+function setScore(id, val) {
+  scores[id] = val;
+  renderRubric(); renderTotals();
+}
+
+function renderTotals() {
+  const key = getRubricKey();
+  const rubric = R[key];
+  const bar = document.getElementById('totals-bar');
+  bar.innerHTML = '';
+  rubric.s.forEach(section => {
+    let total = 0;
+    section.ind.forEach(i => total += (scores[i.id] || 0));
+    const cell = document.createElement('div');
+    cell.className = 'total-cell';
+    cell.style.setProperty('--prog', total / section.max);
+    cell.innerHTML = `<div class="total-code">${section.c}</div><div class="total-num">${total}</div><div class="total-den">de ${section.max} puntos</div>`;
+    bar.appendChild(cell);
+  });
+}
+
+// ===================================================
+// AI ANALYSIS
+// ===================================================
+async function analyseAI() {
+  if (!apiKey) { openModal(); return; }
+  const texto = getActiveText();
+  if (!texto) { alert('Introduce ou transcribe primeiro o texto do/a alumno/a.'); return; }
+
+  const key = getRubricKey();
+  const rubric = R[key];
+  const btn = document.getElementById('btn-analyse');
+  btn.disabled = true; btn.textContent = '⏳ Analizando...';
+
+  const dxExempt = rubric.s.flatMap(s => s.ind.filter(i => i.dx).map(i => i.id));
+  const indList = rubric.s.map(s => s.ind.map(i =>
+    `- ${i.id}: 0="${i.h[0]}" | 1="${i.h[1]}" | 2="${i.h[2]}"`
+  ).join('\n')).join('\n');
+
+  const prompt = `Es un corrector experto da Avaliación de Diagnóstico de 4º EP en Galicia.
+
+Tarefa: ${rubric.t}
+Extensión mínima: ${rubric.ext}
+Dislexia: ${dislexia ? 'SÍ — pon 2 en: ' + dxExempt.join(', ') : 'Non'}
+
+Texto:
+"""${texto}"""
+
+Indicadores:
+${indList}
+
+Responde SÓ con JSON válido, sen texto nin markdown:
+{"relevancia":1,"ordenacion":2,...}
+
+Inclúe TODOS os ids. Sen xustificacións.`;
+
+  try {
+    const data = await callAPI('claude-haiku-4-5', [{ role:'user', content: prompt }], 300);
+    const raw = data.content?.map(i => i.text || '').join('').trim() || '{}';
+    const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
+    aiSug = parsed;
+    if (dislexia) dxExempt.forEach(id => { aiSug[id] = 2; });
+    Object.entries(aiSug).forEach(([id, val]) => { if (scores[id] === undefined) scores[id] = val; });
+    renderRubric(); renderTotals();
+    showToast('✓ Análise completada — revisa e axusta se é necesario');
+  } catch { alert('Erro ao analizar. Comproba a conexión e a API key.'); }
+
+  btn.disabled = false; btn.textContent = '🤖 Analizar con IA e suxerir puntuacións';
+}
+
+// ===================================================
+// FEEDBACK
+// ===================================================
+async function genFeedback() {
+  if (!apiKey) { openModal(); return; }
+  const texto = getActiveText();
+  if (!texto) { alert('Introduce ou transcribe primeiro o texto.'); return; }
+
+  const key = getRubricKey();
+  const rubric = R[key];
+  const lang = document.getElementById('sel-lang').value;
+  const box = document.getElementById('feedback-box');
+  box.className = 'feedback-area loading'; box.textContent = 'Xerando feedback...';
+
+  let sum = '';
+  rubric.s.forEach(s => {
+    let t = 0; s.ind.forEach(i => t += (scores[i.id] || 0));
+    sum += `${s.c}: ${t}/${s.max}. `;
+  });
+
+  const prompt = lang === 'gl'
+    ? `Es mestre corrector da AD de 4º EP en Galicia. Tarefa: ${rubric.t}. Texto: "${texto}". Puntuacións: ${sum}. Escribe feedback breve e motivador en GALEGO. MÁXIMO 500 caracteres. Un punto forte + un aspecto a mellorar concreto. Ton positivo. Sen listas.`
+    : `Eres corrector de la AD de 4º EP en Galicia. Tarea: ${rubric.t}. Texto: "${texto}". Puntuaciones: ${sum}. Escribe feedback breve y motivador en ESPAÑOL. MÁXIMO 500 caracteres. Un punto fuerte + un aspecto a mejorar concreto. Tono positivo. Sin listas.`;
+
+  try {
+    const data = await callAPI('claude-haiku-4-5', [{ role:'user', content: prompt }], 400);
+    const fb = data.content?.map(i => i.text || '').join('') || 'Non se puido xerar o feedback.';
+    box.className = 'feedback-area'; box.textContent = fb;
+    const cnt = document.getElementById('fb-count');
+    cnt.textContent = `${fb.length} / 500 caracteres`;
+    cnt.classList.toggle('over', fb.length > 500);
+  } catch { box.className='feedback-area'; box.textContent='Erro ao conectar coa IA.'; }
+}
+
+function copyFeedback() {
+  const t = document.getElementById('feedback-box').textContent;
+  navigator.clipboard.writeText(t).then(() => showToast('Copiado ✓'));
+}
+
+// ===================================================
+// SAVE / RESET
+// ===================================================
+function saveCorrection() {
+  const key = getRubricKey();
+  const rubric = R[key];
+  const sectionTotals = {};
+  rubric.s.forEach(s => {
+    let t = 0; s.ind.forEach(i => t += (scores[i.id] || 0));
+    sectionTotals[s.c] = { total: t, max: s.max };
+  });
+
+  const c = {
+    id: Date.now(),
+    date: new Date().toLocaleString('gl'),
+    codigo: document.getElementById('inp-cod').value.trim() || 'Sen código',
+    materia: document.getElementById('sel-mat').value,
+    pregunta: document.getElementById('sel-preg').value,
+    rubricTitle: rubric.t,
+    dislexia,
+    texto: getActiveText(),
+    scores: { ...scores },
+    sectionTotals,
+    feedback: document.getElementById('feedback-box').textContent
+  };
+
+  saved.unshift(c);
+  localStorage.setItem('ad_corr', JSON.stringify(saved));
+  renderSaved();
+  showToast('Corrección gardada ✓');
+}
+
+function resetAll() {
+  scores = {}; aiSug = {}; dislexia = false; imageBase64 = null; imageMime = null;
+  document.getElementById('dislexia-tog').classList.remove('on');
+  document.getElementById('inp-cod').value = '';
+  document.getElementById('inp-text').value = '';
+  document.getElementById('inp-transcribed').value = '';
+  document.getElementById('char-cnt').textContent = '0 caracteres';
+  document.getElementById('char-cnt-tr').textContent = '0 caracteres';
+  document.getElementById('preview-wrap').classList.remove('visible');
+  document.getElementById('inp-file').value = '';
+  if (apiKey) document.getElementById('btn-transcribe').disabled = true;
+  document.getElementById('feedback-box').textContent = 'O feedback xerarase ao premer o botón...';
+  document.getElementById('fb-count').textContent = '0 / 500 caracteres';
+  setMode('text');
+  renderRubric(); renderTotals();
+}
+
+// ===================================================
+// SAVED LIST
+// ===================================================
+function renderSaved() {
+  const container = document.getElementById('saved-list');
+  if (!saved.length) {
+    container.innerHTML = '<div style="padding:24px;text-align:center;color:var(--text-muted);font-size:0.88rem;">Aínda non hai correccións gardadas.</div>';
+    return;
+  }
+  container.innerHTML = '';
+  saved.forEach(c => {
+    const pills = Object.entries(c.sectionTotals).map(([code, {total, max}]) => {
+      const r = total/max;
+      const cls = r>=0.7?'pill-high':r>=0.4?'pill-mid':'pill-low';
+      return `<span class="pill ${cls}">${code}: ${total}</span>`;
+    }).join('');
+
+    const item = document.createElement('div');
+    item.className = 'saved-item';
+    item.innerHTML = `
+      <div>
+        <div class="saved-meta">${c.date} · ${c.materia} · ${c.pregunta}${c.dislexia?' · DISLEXIA':''}</div>
+        <div class="saved-codigo">${c.codigo}</div>
+        <div class="saved-title">${c.rubricTitle}</div>
+      </div>
+      <div>
+        <div class="score-pills" style="margin-bottom:8px;">${pills}</div>
+        <button class="btn btn-danger btn-sm" style="float:right" onclick="delSaved(${c.id},event)">🗑</button>
+      </div>`;
+    item.addEventListener('click', e => { if (e.target.tagName==='BUTTON') return; loadSaved(c); });
+    container.appendChild(item);
+  });
+}
+
+function loadSaved(c) {
+  switchTab('corrixir');
+  document.getElementById('sel-mat').value = c.materia; onMatChange();
+  document.getElementById('sel-preg').value = c.pregunta;
+  document.getElementById('inp-cod').value = c.codigo;
+  document.getElementById('inp-text').value = c.texto || '';
+  dislexia = c.dislexia;
+  document.getElementById('dislexia-tog').classList.toggle('on', dislexia);
+  scores = { ...c.scores }; aiSug = {};
+  setMode('text');
+  renderRubric(); renderTotals();
+  document.getElementById('feedback-box').textContent = c.feedback || '';
+}
+
+function delSaved(id, e) {
+  e.stopPropagation();
+  if (!confirm('Borrar esta corrección?')) return;
+  saved = saved.filter(c => c.id !== id);
+  localStorage.setItem('ad_corr', JSON.stringify(saved));
+  renderSaved();
+}
+
+function clearAll() {
+  if (!confirm('Borrar TODAS as correccións? Esta acción non se pode desfacer.')) return;
+  saved = []; localStorage.setItem('ad_corr','[]'); renderSaved();
+}
+
+function exportCSV() {
+  if (!saved.length) { alert('Non hai correccións para exportar.'); return; }
+  const codes = [...new Set(saved.flatMap(c => Object.keys(c.sectionTotals)))];
+  const hdrs = ['Data','Código','Materia','Pregunta','Dislexia','Tarefa',...codes.map(k=>`${k} pts`),...codes.map(k=>`${k} máx`),'Feedback'];
+  const rows = saved.map(c => [c.date,c.codigo,c.materia,c.pregunta,c.dislexia?'Si':'Non',c.rubricTitle,...codes.map(k=>c.sectionTotals[k]?.total??''),...codes.map(k=>c.sectionTotals[k]?.max??''),(c.feedback||'').replace(/\n/g,' ')]);
+  const csv = [hdrs,...rows].map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8;'}));
+  a.download = `correccions_AD2526_${new Date().toISOString().slice(0,10)}.csv`;
+  a.click();
+}
+
+// ===================================================
+// TABS
+// ===================================================
+function switchTab(name) {
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',['corrixir','gardados'][i]===name));
+  document.querySelectorAll('.tab-content').forEach(t=>t.classList.toggle('active',t.id===`tab-${name}`));
+  if (name==='gardados') renderSaved();
+}
+
+// ===================================================
+// INIT
+// ===================================================
+updateApiIndicator();
+if (apiKey) enableAI();
+onFormChange();
+renderSaved();
+
+document.getElementById('modal-key').addEventListener('click', function(e) {
+  if (e.target === this) closeModal();
+});
+</script>
+</body>
+</html>
