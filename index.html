@@ -1161,7 +1161,7 @@ async function verifyKey() {
   try {
     const r = await fetch('https://api.anthropic.com/v1/messages', {
       method:'POST', headers:{'Content-Type':'application/json','x-api-key':k,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
-      body: JSON.stringify({model:'claude-haiku-4-5',max_tokens:10,messages:[{role:'user',content:'Hi'}]})
+      body: JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:10,messages:[{role:'user',content:'Hi'}]})
     });
     if (r.ok || r.status===400) {
       apiKey=k; localStorage.setItem('ad_key',k);
@@ -1270,7 +1270,7 @@ Por favor:
 Responde ÚNICAMENTE coa transcrición, sen ningún texto adicional.`;
 
   try {
-    const data = await callAPI('claude-sonnet-4-5', [{
+    const data = await callAPI('claude-sonnet-4-20250514', [{
       role: 'user',
       content: [
         { type: 'image', source: { type: 'base64', media_type: imageMime, data: imageBase64 } },
@@ -1434,7 +1434,7 @@ Responde SÓ con JSON válido, sen texto nin markdown:
 Inclúe TODOS os ids. Sen xustificacións.`;
 
   try {
-    const data = await callAPI('claude-haiku-4-5', [{ role:'user', content: prompt }], 300);
+    const data = await callAPI('claude-haiku-4-5-20251001', [{ role:'user', content: prompt }], 300);
     const raw = data.content?.map(i => i.text || '').join('').trim() || '{}';
     const parsed = JSON.parse(raw.replace(/```json|```/g,'').trim());
     aiSug = parsed;
@@ -1472,7 +1472,7 @@ async function genFeedback() {
     : `Eres corrector de la AD de 4º EP en Galicia. Tarea: ${rubric.t}. Texto: "${texto}". Puntuaciones: ${sum}. Escribe feedback breve y motivador en ESPAÑOL. MÁXIMO 500 caracteres. Un punto fuerte + un aspecto a mejorar concreto. Tono positivo. Sin listas.`;
 
   try {
-    const data = await callAPI('claude-haiku-4-5', [{ role:'user', content: prompt }], 400);
+    const data = await callAPI('claude-haiku-4-5-20251001', [{ role:'user', content: prompt }], 400);
     const fb = data.content?.map(i => i.text || '').join('') || 'Non se puido xerar o feedback.';
     box.className = 'feedback-area'; box.textContent = fb;
     const cnt = document.getElementById('fb-count');
